@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.IO;
 
 namespace CoreAngJwt
 {
@@ -28,8 +29,8 @@ namespace CoreAngJwt
         }
 
         public IConfiguration Configuration { get; }
-        private const string SecretKey = "Secret@SenhaToken";
-        private readonly SymmetricSecurityKey _signingkey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
+        private const string SecretKey = "Secret@SenhaToken"; // Senha para assinar o Token, no formato String
+        private readonly SymmetricSecurityKey _signingkey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey)); // Transformando senha em SymmetricSecuritykey
 
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -47,7 +48,7 @@ namespace CoreAngJwt
 
             services.AddMvc(opt => {
                 opt.OutputFormatters.Remove(new XmlDataContractSerializerOutputFormatter());
-                
+
                 var policy = new AuthorizationPolicyBuilder()
                              .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                              .RequireAuthenticatedUser()
@@ -57,7 +58,7 @@ namespace CoreAngJwt
 
             });
 
-            
+
 
             services.AddAuthorization(opt => {
                     opt.AddPolicy("PodeLer", policy => policy.RequireClaim("Autonomia", "Ler"));
@@ -87,6 +88,19 @@ namespace CoreAngJwt
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.Use(async(context,next) => {
+              await next();
+              if (context.Response.StatusCode == 404 &&
+                  !Path.HasExtension(context.Request.Path.Value) &&
+                  !context.Request.Path.Value.StartsWith("/api/"))
+              {
+                  context.Request.Path = "/index.html";
+                  await next();
+              }
+
+
+            });
 
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtTokenOptions));
 
