@@ -1,0 +1,12 @@
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\bin\Debug\netcoreapp2.0\app.db
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\bin\Debug\netcoreapp2.0\CoreAngJwt.deps.json
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\bin\Debug\netcoreapp2.0\CoreAngJwt.runtimeconfig.json
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\bin\Debug\netcoreapp2.0\CoreAngJwt.runtimeconfig.dev.json
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\bin\Debug\netcoreapp2.0\CoreAngJwt.dll
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\bin\Debug\netcoreapp2.0\CoreAngJwt.pdb
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\obj\Debug\netcoreapp2.0\CoreAngJwt.csproj.CoreCompileInputs.cache
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\obj\Debug\netcoreapp2.0\CoreAngJwt.AssemblyInfoInputs.cache
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\obj\Debug\netcoreapp2.0\CoreAngJwt.AssemblyInfo.cs
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\obj\Debug\netcoreapp2.0\CoreAngJwt.dll
+C:\Users\tgdsn\Desktop\ESTUDO TOM\CORE_ANG_JWT\CoreAngJwt\obj\Debug\netcoreapp2.0\CoreAngJwt.pdb
