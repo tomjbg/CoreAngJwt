@@ -29,8 +29,9 @@ namespace CoreAngJwt
         }
 
         public IConfiguration Configuration { get; }
-        private const string SecretKey = "SecretToken@123";
-        private readonly SymmetricSecurityKey _signingkey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
+
+        private const string SecretKey = "Secret@SenhaToken"; // Senha para assinar o Token, no formato String
+        private readonly SymmetricSecurityKey _signingkey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey)); // Transformando senha em SymmetricSecuritykey
 
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -56,7 +57,7 @@ namespace CoreAngJwt
             //que nas requisições é exigido um Token JwtBearer e usuário autenticado.
             services.AddMvc(opt => {
                 opt.OutputFormatters.Remove(new XmlDataContractSerializerOutputFormatter());
-                
+
                 var policy = new AuthorizationPolicyBuilder()
                              .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                              .RequireAuthenticatedUser()
@@ -68,6 +69,7 @@ namespace CoreAngJwt
 
             //  AUTHORIZATION
             // Definindo regras de Autorização
+
             services.AddAuthorization(opt => {
                     opt.AddPolicy("PodeLer", policy => policy.RequireClaim("Autonomia", "Ler"));
                     opt.AddPolicy("PodeModificar", policy => policy.RequireClaim("Autonomia", "Modificar"));
@@ -127,6 +129,7 @@ namespace CoreAngJwt
                 app.UseExceptionHandler("/Home/Error");
             }
 
+
             app.Use(async (context , next) => {
                await next();
                if(context.Response.StatusCode == 404 &&
@@ -136,6 +139,7 @@ namespace CoreAngJwt
                       await next();
                }
             });
+
 
             // CORS -> Cross-origin resource sharing = Compartilhamento de Recursos de Origem Cruzada
             // Determinamos por exemplo quais domínios (nomesite.dominio.com) podem fazer Request para nosso site

@@ -10,6 +10,16 @@ namespace CoreAngJwt.Controllers
 {
     public class HomeController : Controller
     {
+      [HttpGet]
+      public JsonResult ListaPalavras() {
+        List<string> lstpalavras = new List<string>();
+        lstpalavras.Add("Laranja");
+        lstpalavras.Add("Abacaxi");
+        lstpalavras.Add("Feijão");
+
+
+        return Json(lstpalavras);
+      }
         public IActionResult Index()
         {
             return View();
