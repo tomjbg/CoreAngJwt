@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using CoreAngJwt.Models;
 using CoreAngJwt.Models.AccountViewModels;
 using CoreAngJwt.Services;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace CoreAngJwt.Controllers
 {
@@ -25,9 +26,12 @@ namespace CoreAngJwt.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
 
+        private readonly JwtTokenOptions _jwtTokenOptions;
+
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+            IOptions<JwtTokenOptions> JwtTokenOptions,
             IEmailSender emailSender,
             ILogger<AccountController> logger)
         {
@@ -35,7 +39,11 @@ namespace CoreAngJwt.Controllers
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
+            _jwtTokenOptions = JwtTokenOptions.Value;
         }
+
+        private static long ToUnixEpochDate(DateTime date) 
+        => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970,1,1,0,0,0, TimeSpan.Zero)).TotalSeconds);
 
         [TempData]
         public string ErrorMessage { get; set; }
@@ -65,7 +73,10 @@ namespace CoreAngJwt.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return RedirectToLocal(returnUrl);
+                    var response = GerarTokenUsuario(model);
+
+                    return Response(response);
+                    //return RedirectToLocal(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -232,7 +243,10 @@ namespace CoreAngJwt.Controllers
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation("User created a new account with password.");
-                    return RedirectToLocal(returnUrl);
+
+                    var response = GerarTokenUsuario(new LoginViewModel{ Email = model.Email, Password = model.Password });
+                    return Response(response);
+                    //return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);
             }
@@ -460,5 +474,37 @@ namespace CoreAngJwt.Controllers
         }
 
         #endregion
+
+        private async Task<object> GerarTokenUsuario(LoginViewModel login) 
+        {
+            var user = await _userManager.FindByEmailAsync(login.Email);
+            var userClaims = await _userManager.GetClaimsAsync(user);
+
+            userClaims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id)); // Defiição, no caso o User ID
+            userClaims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email)); // Email do usuario
+            userClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, await _jwtTokenOptions.JtiGenerator())); // Gerado através do JwtTokenOptions
+            userClaims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtTokenOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64)); // Iat -> IssuerAtToken -> Quando o Token foi gerado
+
+            // Gerando de fato uma instância do Token
+            var jwt = new JwtSecurityToken(
+                issuer: _jwtTokenOptions.Issuer,
+                audience: _jwtTokenOptions.Audience,
+                claims: userClaims,
+                notBefore: _jwtTokenOptions.NotBefore,
+                expires: _jwtTokenOptions.Expiration,
+                signingCredentials: _jwtTokenOptions.signingCredentials
+            );
+
+            // Codificando o Token para String
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            var response = new {
+                access_token = encodedJwt,
+                expires_in = (int)_jwtTokenOptions.ValidFor.TotalSeconds,
+                user = user
+            };
+            return Response;
+        }
+
     }
 }

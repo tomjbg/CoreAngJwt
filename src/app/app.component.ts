@@ -9,26 +9,11 @@ import { Http } from '@angular/http';
 
 export class AppComponent {
   title = 'app';
-  lst: string[];
+  lst: Array<string> = [];
 
-  /**
-   *
-   */
   constructor(http: Http) {
+    
   }
+  
 }
 
-Busca(): string {
-  return 'Vai que cola';
-}
-
-BuscaLista(): void {
-
-  this.http.get('Home/ListaPalavras')
-    .subscribe(l => this.lst.push(l.json()));
-
-  this.lst.forEach(txt => {
-    console.log(txt);
-  });
-
-}
